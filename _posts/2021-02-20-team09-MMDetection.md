@@ -661,6 +661,7 @@ The video is transformed into gif for presentation purpose.
 
 ![Experiment 8](../assets/images/team09/result_cooking.gif)
 ![Experiment 8](../assets/images/team09/result_streets.gif)
+![Experiment 8](../assets/images/team09/bruinwalk1.gif)
 
 
 # Evaluation Code
