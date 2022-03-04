@@ -28,6 +28,7 @@ Head: RPN Head and ROI Head
 ResNet 50: Stacked by identity blocks and convolutional blocks -->
 
 ### Object Localization:
+In object localization, we use a special type of label to express class and bounding box position, as follows:
 Each input image X with a label y = [y1, y2, y3, y4, y5, y6, y7, y8]
 
 where y1 = Pc = 1 if there is an object else 0
@@ -47,6 +48,7 @@ y7 = 1 if the object is class 2 else 0
 y8 = 1 if the object is class 3 else 0
 
 ### Landmark detection
+Landmark detection is delineating a shape using many points on that shape, its data format is as follows:
 
 instead of nx, ny, nw, nh, we use a series of points
 
@@ -58,61 +60,41 @@ input x = closely cropped image of a car at the center of the image
 
 output y = 1 if this is a car else 0
 
-sliding windows detection
+sliding windows detection: focus on each window of the image and decide whether there is a car, and slide the window by one stride. The disadvantage is huge computational cost.
 
-larger sliding window
-
-even larger sliding window
-
-disadvantage: huge computational cost
-
-solution: convolutional sliding window detection
-
-Convolutional Implementation of Sliding Window Detection
-
-Turn FC layer into convolutional layer
+The solution is to use Convolutional Implementation of Sliding Window Detection, which turns FC layer into convolutional layer.
 
 ### Bounding Box Predictions
 
-YOLO algorithms
+YOLO algorithm is a one-stage algorithm that only looks once, instead of looking at the image twice as in Faster-RCNN.
 
-Intersection over Union (IoU)
+Intersection over Union (IoU) is a useful way to calculate overlapping.
 
 Non-max suppression: detect the object only once, pick the bounding box with the largest IoU
 
-Anchor-boxes
+Anchor-boxes are predefined shapes of bounding boxes.
 
 ### Region Proposal
 
-R-CNN: Regions CNN
+R-CNN (Regions CNN) is a segmentation algorithm.
 
-segmentation algorithm
+R-CNN proposes regions, and then the headerclassifies proposed regions one at a time. Output is label + bounding box.
 
-R-CNN: Propose regions, classify proposed regions one at a time. Output label + bounding box.
+The downside of this approach is that it runs quite slow.
 
-Downside: quite slow
+- need to classify one region at a time 
 
-- classify one region at a time since not convolutional implementation
-
-Fast R-CNN: Propose Regions. Use convolutional implementation of sliding windows to classify all proposed regions.
+Fast R-CNN improves by using convolutional implementation of sliding windows to classify all proposed regions.
 
 - classify all regions all at once with convolutional implementation of sliding windows.
 - but the Propose Region part is still slow
 
-Faster R-CNN: Use convolutional network to propose regions.
+Faster R-CNN: further improves based on Fast R-CNN by using convolutional network to propose regions.
 
 Andrew Ng claims Faster R-CNN still slower than YOLO algorithm.
 
 ### Semantic Segmentation
-per-pixel class labels
-
-U-Net
-
-Transpose Convolutions
-
-U-Net Architecture
-
-make a 2 by 2 into 4 by 4
+Different from outputing a bounding box, semantic segmentation aims to output per-pixel class labels. A classical network architecture used is U-Net, which involves downsampling using Convolutions and then upsampling with skip-connections. We upsample by using Transpose Convolutions, which can make a 2 by 2 into 4 by 4, kind of reverse of convolution operation.
 
 ## Environment Setup
 1. In your google drive, create a new .ipynb file for environment setup, here I name it “SETUP.ipynb”. In SETUP.ipynb do the following environment setup
@@ -624,7 +606,7 @@ show_result_pyplot(model, img, result, score_thr=0.3)
 ```python
 cv2.rectangle(img, (310,220), (360,270), (0,0,0), -1)
 ```
-![Experiment 1]({{ '/assets/images/team09/1.jpg' | relative_url }}){: style="width: 400px; max-width: 100%;"} Fig 1. Experiment 1.
+![Experiment 1](../assets/images/team09/1.png)
 
 ### experiment 2:
 
@@ -632,7 +614,7 @@ cv2.rectangle(img, (310,220), (360,270), (0,0,0), -1)
 cv2.rectangle(img, (100,100), (300,250), (127,50,127), -1)
 ```
 
-![Experiment 2]({{ '/assets/images/team09/2.jpg' | relative_url }}){: style="width: 400px; max-width: 100%;"} Fig 2. Experiment 2.
+![Experiment 2](../assets/images/team09/2.png)
 
 ### experiment 3:
 
@@ -640,29 +622,27 @@ cv2.rectangle(img, (100,100), (300,250), (127,50,127), -1)
 cv2.rectangle(img, (300,220), (380,270), (0,0,0), -1)
 ```
 
-![Experiment 3]({{ '/assets/images/team09/3.jpg' | relative_url }}){: style="width: 400px; max-width: 100%;"} Fig 3. Experiment 3.
-
+![Experiment 3](../assets/images/team09/3.png)
 ### experiment 4:
 
 ```python
 cv2.rectangle(img, (280,200), (400,300), (0,0,0), -1)
 ```
 
-![Experiment 4]({{ '/assets/images/team09/4.jpg' | relative_url }}){: style="width: 400px; max-width: 100%;"} Fig 4. Experiment 4.
-### experiment 5:
+![Experiment 4](../assets/images/team09/4.png)
 
 ```python
 cv2.rectangle(img, (260,190), (410,320), (0,0,0), -1)
 ```
 
-![Experiment 5]({{ '/assets/images/team09/5.jpg' | relative_url }}){: style="width: 400px; max-width: 100%;"} Fig 5. Experiment 5.
+![Experiment 5](../assets/images/team09/5.png)
 
 ### experiment 6:
 
-experiment using our living room’s picture
+experiment using our living room’s picture, the little black patch at the top left corner does not catch attention of the algorithm.
 
 
-![Experiment 6]({{ '/assets/images/team09/6.jpg' | relative_url }}){: style="width: 400px; max-width: 100%;"} Fig 6. Experiment 6.
+![Experiment 6](../assets/images/team09/6.jpeg)
 
 ### experiment 7:
 
@@ -672,9 +652,19 @@ cv2.rectangle(img, (700,800), (1000,1000), (0,0,0), -1)
 
 network is fooled to recognize our black patch as a “TV” with score = 0.63
 
-![Experiment 7]({{ '/assets/images/team09/7.jpg' | relative_url }}){: style="width: 400px; max-width: 100%;"} Fig 7. Experiment 7.
+![Experiment 7](../assets/images/team09/7.jpeg)
 
 
+### experiment 8:
+We also tested on our own video examples.
+
+<video controls width="250">
+    <source src="../assets/images/team09/cooking.MP4" type="video/mp4">
+</video>
+
+<video controls width="250">
+    <source src="../assets/images/team09/streets.MP4" type="video/mp4">
+</video>
 
 # Evaluation Code
 
@@ -863,3 +853,4 @@ You can find more Markdown syntax at [this page](https://www.markdownguide.org/b
 [Res2Net](https://github.com/Res2Net/Res2Net-PretrainedModels)
 
 [ResNet](https://github.com/KaimingHe/deep-residual-networks)
+
