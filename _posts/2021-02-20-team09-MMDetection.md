@@ -656,15 +656,12 @@ network is fooled to recognize our black patch as a “TV” with score = 0.63
 
 
 ### experiment 8:
-We also tested on our own video examples.
+We also tested on our own video examples. The algorithm deals with data in .mp4 format.
+The video is transformed into gif for presentation purpose.
 
-<video controls width="250">
-    <source src="../assets/images/team09/cooking.MP4" type="video/mp4">
-</video>
+![Experiment 8](../assets/images/team09/result_cooking.gif)
+![Experiment 8](../assets/images/team09/result_streets.gif)
 
-<video controls width="250">
-    <source src="../assets/images/team09/streets.MP4" type="video/mp4">
-</video>
 
 # Evaluation Code
 
