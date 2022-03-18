@@ -630,6 +630,7 @@ cv2.rectangle(img, (280,200), (400,300), (0,0,0), -1)
 ```
 
 ![Experiment 4](../assets/images/team09/4.png)
+### experiment 5:
 
 ```python
 cv2.rectangle(img, (260,190), (410,320), (0,0,0), -1)
@@ -663,7 +664,51 @@ The video is transformed into gif for presentation purpose.
 ![Experiment 8](../assets/images/team09/result_streets.gif)
 ![Experiment 8](../assets/images/team09/bruinwalk1.gif)
 
+### experiment 9: NBA image
+![Experiment 9](../assets/images/team09/NBA.png)
+For this NBA image, which is very crowded with persons. Many persons are detected with high score, but also many persons are detected with very low score, which shows a low degree of confidence. Many persons are not detected.
 
+### experiment 10: Ackerman Union image
+![Experiment 10](../assets/images/team09/Ackerman.png)
+### experiment 11: birthday image
+![Experiment 11](../assets/images/team09/birthday.png)
+### experiment 12: UCLAhealth image
+![Experiment 12](../assets/images/team09/UCLAhealth.png)
+
+### experiment 13: Concert image
+![Experiment 13](../assets/images/team09/concert.png)
+### experiment 14: bruinwalk image
+![Experiment 14](../assets/images/team09/bruinwalk1.png)
+
+
+### experiment 15: bruinwalk images with a black patch
+![Experiment 15](../assets/images/team09/bruinwalk2.png)
+
+### Experiments Analysis
+#### Static images
+The detection algorithm works well on the demo image provided by the MMdetection itself with high accuracy and low error rates.
+If we set the score threshold to be 0.5, i.e. only display the objects for which the score given to objects category larger than 0.5, we can almost get every object with correct bounding boxes and class labels.
+
+For the customized image, which is not provided by MMDetection but by us, i.e. the living room image, it makes more mistakes. For example, it misrecognize an [orange] to be an [apple]. Also, the [vinyl CDs] are misrecognized as [books]. Probably it is due to the side view of the CDs are indeed very similar to books, and the orange from such a far away point of view looks indeed indistinguishable from an apple, and they are both very likely to placed in plates on the living room table. The mistakes are understandable since a human may even make such misrecognitions given this specific image.
+The black patches on our customized image, when small, even does not draw attention from the algorithm--it does not give a bounding box, which means it does not assume it to be an object. When the black patch becomes large, the algorithm misrecognizes it as a TV, which is very interesting. This recognition makes very much sense, since a black squared-shape object in side a living room is indeed very likely to be a TV. Although the algorithm is fooled, I think this TV misrecognition, on the contrary, proves the wisdom of the model in a sense. 
+#### Videos
+On Bruinwalk, the algorithm has very high accuracy, it is able to recognize persons, trucks, umbrellas, fire hydrants. Interestingly, it mistakenly sees the bruin bear statue as an elephant.
+Also, it mistakenly sees a banner on the ground as a parking meter.
+It  mistakenly sees an advertising image on the banner as a book, probably because it looks like a book's cover.
+Another interesting discovery is that the algorithm recognizes a tree's mirror image in a building's window as a [potted plant], it even can detect mirror images!
+it at an instant mistakenly sees a gap in the tree's leaves as a car.
+it mistakenly sees a four-footed banner as a chair.
+it mistakenly sees a four-footed banner as a chair.
+it mistakenly sees a handrail of a stair as an airplane.
+In the Rochester-Midvale street view video, it correctly identifies many potted plants and cars. However, it frequently identifies some gaps in the tree leaves as elephants or horses.
+In the cooking video, it correclt identifies many bowls, a sink, and carrots, but it mistakenly sees some bowls as clocks or vases, probably due to the shape of these bowls are indeed artistic in a sense. It sees an orange-colored plate as an orange mistakenly. It sees a plate as a frisbee mistakenly. It sees romain hearts as broccoli mistakenly. It sees a pot as a bird mistakenly, very strange. It mistakenly sees a bottled soy sauce and a bottled olive oil as wines. Indeed it's a hard topic to teach algorithms distinguishing which bottle is soyce sauce, which bottle is wine, oil, vinegar, it does not have taste! It mistakenly sees a pot with a glass lid as a wine glass.
+
+In conclusion, the mistakes made are all reasonable because of the similarity in shape between the object represented by the true label and the object represented by the wrong label, especially given the 2D image or video.
+The reaction rate of the algorithm is much faster than humans. Given the variety and the large number of objects in the video and such a high speed to change the perspective, a human watcher of the video cannot detect all details, but the algorithm is able to detect almost every small tiny object on the very edge of the image that does not draw a human's attention.
+
+#### Images with black patch attacks
+For black patches interference experiments, if the black patch is small compared to the size of the object, the detection algorithm is little affected. It still gives correct bounding box and class labels with as high scores as 1.00.
+However, when the black patch grows in size to about half the size of the object, and blurs certain significant edges and shapes of the object, like in experiment 4 and 5, the algorithm will be fooled.
 # Evaluation Code
 
 ## GCNet.ipynb
@@ -825,6 +870,96 @@ or you can write in-text formula $$y = wx + b$$.
 You can find more Markdown syntax at [this page](https://www.markdownguide.org/basic-syntax/). -->
 
 ## SOTA Model/Backbone Results Table
+This table contains our reproduced results of popular MMDetection frameworks on the COCO-2017 dataset.
+
+Our code for each row can be found in the links in the “MyCode/Results” section.
+
+For performance breakdown on specific object categories, please also refer to the links in the “MyCode/Results” column.
+
+In the “config” and “model_url” sections, we have collected the respective paths for each of the models we tested, so it would be easier for readers to reproduce our results.
+
+*FPN for Feature Pyramid Network
+*PVT for Pyramid Vision Transformers
+*RSB for ResNet Strikes Back
+
+
+Among all the small to medium sized prediction models (memory usage under 20GB), the highest performing model uses the SWIN-Small backbone and the Mask-RCNN detection head. This is consistent with the current COCO-2017 leaderboard on https://paperswithcode.com/sota/object-detection-on-coco where 9 out of the top 10 models utilize some form of the SWIN-Large backbone.
+
+>insert picture of leaderboard
+
+We observe that our current detection models obtain much lower mAP on detecting Small Objects compared to Large and Medium Objects. While most modern detection models can reach 50-60 percent accuracy on Large Objects, their accuracy on Small Objects stagnates at around 20-30 percent.
+
+>insert picture of mean mAP for small medium and large object
+
+Given example of the above-mentioned SWIN-S model(0.482-mAP), we can see that while it can predict large objects with 0.627% accuracy, it only achieves 0.321% accuracy on small objects. If we look more closely at the performance breakdown by object category, we can see that detection performance varies hugely between large objects like “airplane | 0.728% |”, “bus | 0.716% |” and small objects like “hair drier | 0.110% |” and “traffic light | 0.311% |”.
+
+>insert grid 
+
+
+| category      | AP    | category     | AP    | category       | AP    |
+|---------------|-------|--------------|-------|----------------|-------|
+| person        | 0.583 | bicycle      | 0.380 | car            | 0.497 |
+| motorcycle    | 0.501 | airplane     | 0.728 | bus            | 0.716 |
+| train         | 0.708 | truck        | 0.423 | boat           | 0.333 |
+| traffic light | 0.311 | fire hydrant | 0.734 | stop sign      | 0.679 |
+| parking meter | 0.532 | bench        | 0.322 | bird           | 0.409 |
+| cat           | 0.726 | dog          | 0.692 | horse          | 0.646 |
+| sheep         | 0.574 | cow          | 0.623 | elephant       | 0.677 |
+| bear          | 0.764 | zebra        | 0.691 | giraffe        | 0.697 |
+| backpack      | 0.232 | umbrella     | 0.456 | handbag        | 0.241 |
+| tie           | 0.382 | suitcase     | 0.478 | frisbee        | 0.710 |
+| skis          | 0.313 | snowboard    | 0.453 | sports ball    | 0.478 |
+| kite          | 0.464 | baseball bat | 0.394 | baseball glove | 0.431 |
+| skateboard    | 0.608 | surfboard    | 0.458 | tennis racket  | 0.569 |
+| bottle        | 0.444 | wine glass   | 0.410 | cup            | 0.490 |
+| fork          | 0.459 | knife        | 0.307 | spoon          | 0.302 |
+| bowl          | 0.466 | banana       | 0.315 | apple          | 0.260 |
+| sandwich      | 0.445 | orange       | 0.365 | broccoli       | 0.272 |
+| carrot        | 0.255 | hot dog      | 0.436 | pizza          | 0.558 |
+| donut         | 0.539 | cake         | 0.453 | chair          | 0.364 |
+| couch         | 0.509 | potted plant | 0.364 | bed            | 0.495 |
+| dining table  | 0.307 | toilet       | 0.668 | tv             | 0.630 |
+| laptop        | 0.678 | mouse        | 0.652 | remote         | 0.432 |
+| keyboard      | 0.543 | cell phone   | 0.415 | microwave      | 0.629 |
+| oven          | 0.392 | toaster      | 0.402 | sink           | 0.418 |
+| refrigerator  | 0.645 | book         | 0.194 | clock          | 0.540 |
+| vase          | 0.408 | scissors     | 0.453 | teddy bear     | 0.528 |
+| hair drier    | 0.110 | toothbrush   | 0.384 | None           | None  |
+
+
+Similar results can be observed for a state of the art CNN-Based ResNeSt-101 model with comparable overall performance(0.477-mAP): “0.614-Large Objects”, “0.301-Small Objects”, “airplane | 0.725% |”, “bus | 0.710% |”, “hair drier | 0.065% |”, “traffic light | 0.314% |. Thus we have reason to believe the both CNN and Transformer architectures suffer from small object detection.
+
+>insert grid 
+
+| category      | AP    | category     | AP    | category       | AP    |
+|---------------|-------|--------------|-------|----------------|-------|
+| person        | 0.602 | bicycle      | 0.364 | car            | 0.510 |
+| motorcycle    | 0.491 | airplane     | 0.725 | bus            | 0.710 |
+| train         | 0.701 | truck        | 0.403 | boat           | 0.330 |
+| traffic light | 0.314 | fire hydrant | 0.727 | stop sign      | 0.700 |
+| parking meter | 0.502 | bench        | 0.297 | bird           | 0.409 |
+| cat           | 0.754 | dog          | 0.694 | horse          | 0.625 |
+| sheep         | 0.588 | cow          | 0.615 | elephant       | 0.697 |
+| bear          | 0.763 | zebra        | 0.725 | giraffe        | 0.725 |
+| backpack      | 0.200 | umbrella     | 0.478 | handbag        | 0.203 |
+| tie           | 0.419 | suitcase     | 0.458 | frisbee        | 0.731 |
+| skis          | 0.304 | snowboard    | 0.486 | sports ball    | 0.508 |
+| kite          | 0.477 | baseball bat | 0.390 | baseball glove | 0.457 |
+| skateboard    | 0.620 | surfboard    | 0.464 | tennis racket  | 0.577 |
+| bottle        | 0.456 | wine glass   | 0.421 | cup            | 0.486 |
+| fork          | 0.436 | knife        | 0.288 | spoon          | 0.249 |
+| bowl          | 0.466 | banana       | 0.292 | apple          | 0.253 |
+| sandwich      | 0.404 | orange       | 0.313 | broccoli       | 0.267 |
+| carrot        | 0.270 | hot dog      | 0.423 | pizza          | 0.570 |
+| donut         | 0.550 | cake         | 0.423 | chair          | 0.347 |
+| couch         | 0.476 | potted plant | 0.321 | bed            | 0.493 |
+| dining table  | 0.324 | toilet       | 0.649 | tv             | 0.616 |
+| laptop        | 0.662 | mouse        | 0.647 | remote         | 0.439 |
+| keyboard      | 0.566 | cell phone   | 0.419 | microwave      | 0.606 |
+| oven          | 0.396 | toaster      | 0.340 | sink           | 0.412 |
+| refrigerator  | 0.662 | book         | 0.203 | clock          | 0.557 |
+| vase          | 0.414 | scissors     | 0.384 | teddy bear     | 0.543 |
+| hair drier    | 0.065 | toothbrush   | 0.349 | None           | None  |
 
 |Model|# Stage|Backbone|Base|Neck|Schedule|Memory|Status|box mAP|box mAR|MyResult|config|model_url|Scale|
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
